@@ -1,0 +1,32 @@
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <span class="logo-mark"></span>
+      </div>
+      <div class="logo-text">
+        <span class="logo-title">Linkhub</span>
+      </div>
+    </div>
+
+    <button class="primary-button full-width" routerLink="/links">
+      <span class="plus-icon">+</span>
+      Novo Link
+    </button>
+
+    <nav class="sidebar-menu">
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/links" routerLinkActive="active">Meus Links</a>
+      <a routerLink="/colecoes" routerLinkActive="active">Coleções</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="ghost-button" (click)="logout()">Sair</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <!-- Aqui entram as páginas: dashboard, links, coleções -->
+    <router-outlet></router-outlet>
+  </main>
+</div>

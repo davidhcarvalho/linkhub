@@ -1,0 +1,51 @@
+<div class="dashboard">
+  <header class="main-header">
+    <div class="welcome-block">
+      <div class="welcome-title">Bem-vindo!</div>
+      <div class="welcome-subtitle">
+        Gerencie seus links e coleções de forma inteligente.
+      </div>
+    </div>
+  </header>
+
+  <div *ngIf="loading">Carregando...</div>
+
+  <section class="dashboard-metrics" *ngIf="!loading && metrics">
+    <div class="metric-card">
+      <div class="metric-label">Total Links</div>
+      <div class="metric-value">{{ metrics.linksTotal }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Total Coleções</div>
+      <div class="metric-value">{{ metrics.collectionsTotal }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Visualizações</div>
+      <div class="metric-value">{{ metrics.totalViews }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Compartilhamentos</div>
+      <div class="metric-value">{{ metrics.totalShares }}</div>
+    </div>
+  </section>
+
+  <section class="dashboard-grid" *ngIf="!loading">
+    <div class="dashboard-panel">
+      <h2>Links recentes</h2>
+      <ul>
+        <li *ngFor="let link of recentLinks">
+          {{ link.title }} — {{ link.short_url || link.url }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="dashboard-panel">
+      <h2>Coleções recentes</h2>
+      <ul>
+        <li *ngFor="let c of recentCollections">
+          {{ c.name }} — {{ c.visibility }}
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>

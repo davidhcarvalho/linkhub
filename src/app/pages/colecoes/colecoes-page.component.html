@@ -1,0 +1,59 @@
+<div class="colecoes-page">
+  <div class="header">
+    <h1>Coleções</h1>
+    <button (click)="openCreateModal()">Nova coleção</button>
+  </div>
+
+  <div *ngIf="loading">Carregando...</div>
+
+  <ul *ngIf="!loading && colecoes.length">
+    <li *ngFor="let c of colecoes">
+      <div>
+        <strong>{{ c.name }}</strong>
+        <span> – {{ c.description }}</span>
+        <span> ({{ c.visibility }})</span>
+      </div>
+      <div class="actions">
+        <button (click)="openEditModal(c)">Editar</button>
+        <button (click)="deleteCollection(c)">Excluir</button>
+      </div>
+    </li>
+  </ul>
+
+  <p *ngIf="!loading && !colecoes.length">Nenhuma coleção cadastrada ainda.</p>
+
+  <div class="modal-backdrop" *ngIf="isModalOpen">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>{{ editingCollection ? 'Editar coleção' : 'Nova coleção' }}</h2>
+        <button class="modal-close" type="button" (click)="closeModal()">✕</button>
+      </div>
+
+      <form [formGroup]="colecaoForm" (ngSubmit)="saveCollection()">
+        <label>
+          Nome
+          <input type="text" formControlName="name" />
+        </label>
+
+        <label>
+          Descrição
+          <textarea formControlName="description"></textarea>
+        </label>
+
+        <label>
+          Visibilidade
+          <select formControlName="visibility">
+            <option value="publico">Público</option>
+            <option value="restrito">Restrito</option>
+            <option value="privado">Privado</option>
+          </select>
+        </label>
+
+        <div class="modal-footer">
+          <button type="button" (click)="closeModal()">Cancelar</button>
+          <button type="submit" [disabled]="colecaoForm.invalid">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

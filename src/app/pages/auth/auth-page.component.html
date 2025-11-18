@@ -1,0 +1,57 @@
+<div class="login-page">
+  <div class="login-logo">
+    <div class="logo-icon">
+      <span class="logo-mark"></span>
+    </div>
+    <div class="login-logo-text">Linkhub</div>
+  </div>
+
+  <div class="login-card">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <h2>{{ isRegisterMode ? 'Criar conta' : 'Entrar' }}</h2>
+
+      <div class="login-field">
+        <label>E-mail</label>
+        <input type="email" formControlName="email" placeholder="seu@email.com" />
+        <div class="login-error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+          <span *ngIf="loginForm.get('email')?.errors?.['required']">E-mail é obrigatório.</span>
+          <span *ngIf="loginForm.get('email')?.errors?.['email']">E-mail inválido.</span>
+        </div>
+      </div>
+
+      <div class="login-field">
+        <label>Senha</label>
+        <input type="password" formControlName="password" placeholder="********" />
+        <div class="login-error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+          <span *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória.</span>
+          <span *ngIf="loginForm.get('password')?.errors?.['minlength']">
+            Senha deve ter pelo menos 6 caracteres.
+          </span>
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="authLoading">
+        {{
+          authLoading
+            ? (isRegisterMode ? 'Criando conta...' : 'Entrando...')
+            : (isRegisterMode ? 'Criar Conta' : 'Entrar')
+        }}
+      </button>
+
+      <div class="login-switch">
+        <ng-container *ngIf="!isRegisterMode">
+          Não tem conta?
+          <a href="#" (click)="toggleMode($event)">Criar conta</a>
+        </ng-container>
+        <ng-container *ngIf="isRegisterMode">
+          Já tem conta?
+          <a href="#" (click)="toggleMode($event)">Entrar</a>
+        </ng-container>
+      </div>
+
+      <div class="login-error global" *ngIf="authError">
+        {{ authError }}
+      </div>
+    </form>
+  </div>
+</div>
