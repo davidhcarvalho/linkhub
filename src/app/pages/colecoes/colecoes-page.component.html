@@ -1,46 +1,85 @@
-<div class="colecoes-page">
-  <div class="header">
-    <div>
-      <h1>Coleções</h1>
-      <p>Agrupe seus links em coleções temáticas.</p>
+<div class="collections-page">
+  <!-- HEADER -->
+  <header class="collections-header">
+    <div class="collections-header-left">
+      <h1>Minhas Coleções</h1>
+      <p>Gerencie todas as suas coleções de links em um só lugar.</p>
     </div>
-    <button class="primary-button" (click)="openCreateModal()">Nova coleção</button>
-  </div>
 
+    <button class="btn-primary" (click)="openCreateModal()">
+      + Nova Coleção
+    </button>
+  </header>
+
+  <!-- RESUMO -->
+  <section class="collections-summary">
+    <div class="summary-card">
+      <span class="summary-label">Total de Coleções</span>
+      <span class="summary-value">{{ collections.length }}</span>
+    </div>
+  </section>
+
+  <!-- LISTA -->
   <div *ngIf="loading" class="loading">Carregando coleções...</div>
 
-  <div class="collections-grid" *ngIf="!loading && colecoes?.length">
-    <div class="collection-card" *ngFor="let c of colecoes">
-      <div class="collection-header">
-        <div>
-          <h2>{{ c.name }}</h2>
-          <p class="collection-description">
-            {{ c.description || 'Sem descrição' }}
-          </p>
+  <section class="collections-list" *ngIf="!loading && collections.length; else emptyState">
+
+    <article class="collection-card" *ngFor="let c of collections">
+      <!-- TOPO GRADIENTE -->
+      <div class="card-header-gradient">
+        <div class="card-header-content">
+          <div class="collection-name">{{ c.name }}</div>
+          <div class="collection-visibility">{{ c.visibility | titlecase }}</div>
         </div>
-        <span class="badge">{{ c.visibility }}</span>
       </div>
 
-      <div class="collection-footer">
-        <button (click)="openEditModal(c)">Editar</button>
-        <button class="danger" (click)="deleteCollection(c)">Excluir</button>
+      <!-- CORPO -->
+      <div class="card-body">
+        <p class="collection-description">
+          {{ c.description || 'Sem descrição definida.' }}
+        </p>
       </div>
-    </div>
-  </div>
 
-  <p *ngIf="!loading && !colecoes?.length" class="empty-state">
-    Nenhuma coleção cadastrada ainda. Clique em "Nova coleção" para começar.
-  </p>
+      <!-- RODAPÉ -->
+      <div class="card-footer">
+        <div class="card-footer-info">
+          <span class="links-count">{{ linksInCollection(c) }} links</span>
+        </div>
+
+        <div class="card-footer-actions">
+          <button class="icon-button" (click)="openEditModal(c)">Editar</button>
+          <button class="icon-button danger" (click)="deleteCollection(c)">Excluir</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- CARD "CRIAR NOVA COLEÇÃO" -->
+    <article class="collection-card new-card">
+      <button class="new-card-button" (click)="openCreateModal()">
+        <span class="new-card-plus">+</span>
+        <span>Criar nova coleção</span>
+      </button>
+    </article>
+
+  </section>
+
+  <!-- ESTADO VAZIO -->
+  <ng-template #emptyState>
+    <p class="empty-state">
+      Nenhuma coleção encontrada. Clique em “Nova Coleção” para adicionar uma.
+    </p>
+  </ng-template>
 
   <!-- MODAL -->
   <div class="modal-backdrop" *ngIf="isModalOpen">
     <div class="modal">
       <div class="modal-header">
-        <h2>{{ editingCollection ? 'Editar coleção' : 'Nova coleção' }}</h2>
+        <h2>{{ editingCollection ? 'Editar Coleção' : 'Nova Coleção' }}</h2>
         <button class="modal-close" type="button" (click)="closeModal()">✕</button>
       </div>
 
-      <form [formGroup]="colecaoForm" (ngSubmit)="saveCollection()">
+      <form [formGroup]="collectionForm" (ngSubmit)="saveCollection()">
+
         <label>
           Nome
           <input type="text" formControlName="name" />
@@ -48,7 +87,7 @@
 
         <label>
           Descrição
-          <textarea formControlName="description"></textarea>
+          <textarea rows="3" formControlName="description"></textarea>
         </label>
 
         <label>
@@ -60,33 +99,30 @@
           </select>
         </label>
 
-        <div class="links-selector" *ngIf="links?.length">
-          <div class="links-selector-header">
-            <span>Links desta coleção</span>
-            <small>Marque os links que devem pertencer a esta coleção.</small>
-          </div>
-
+        <!-- SELEÇÃO DE LINKS DA COLEÇÃO -->
+        <div class="links-selector" *ngIf="links.length">
+          <div class="links-selector-title">Links desta coleção</div>
           <div class="links-selector-list">
-            <label *ngFor="let link of links" class="links-selector-item">
+            <label *ngFor="let link of links">
               <input
                 type="checkbox"
-                [checked]="link.id ? selectedLinkIds.has(link.id.toString()) : false"
-                (change)="onToggleLinkSelection(link, $event.target.checked)"
+                [checked]="isLinkSelected(link)"
+                (change)="toggleLinkSelection(link, $any($event.target).checked)"
               />
-              <div class="links-selector-text">
-                <div class="title">{{ link.title || 'Sem título' }}</div>
-                <div class="url">{{ link.short_url || link.url }}</div>
-              </div>
+              <span class="links-selector-label">
+                {{ link.title || link.url }}
+              </span>
             </label>
           </div>
         </div>
 
         <div class="modal-footer">
           <button type="button" (click)="closeModal()">Cancelar</button>
-          <button type="submit" [disabled]="colecaoForm.invalid || saving">
+          <button type="submit" [disabled]="collectionForm.invalid || saving">
             {{ saving ? 'Salvando...' : 'Salvar' }}
           </button>
         </div>
+
       </form>
     </div>
   </div>

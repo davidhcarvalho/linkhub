@@ -1,57 +1,74 @@
 <div class="links-page">
-  <div class="header">
-    <div>
+  <!-- Cabeçalho -->
+  <header class="links-header">
+    <div class="links-header-left">
       <h1>Meus Links</h1>
       <p>Gerencie seus links encurtados e organize por coleções.</p>
     </div>
-    <button class="primary-button" (click)="openCreateModal()">Novo link</button>
-  </div>
 
+    <button class="btn-primary" (click)="openCreateModal()">
+      + Novo Link
+    </button>
+  </header>
+
+  <!-- Resumo simples -->
+  <section class="links-summary">
+    <div class="summary-card">
+      <span class="summary-label">Total de Links</span>
+      <span class="summary-value">{{ links.length }}</span>
+    </div>
+  </section>
+
+  <!-- Lista de links em cards -->
   <div *ngIf="loading" class="loading">Carregando links...</div>
 
-  <div class="table-wrapper" *ngIf="!loading && links?.length">
-    <table>
-      <thead>
-        <tr>
-          <th>Título</th>
-          <th>URL original</th>
-          <th>URL curta</th>
-          <th>Cliques</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let link of links">
-          <td>{{ link.title || 'Sem título' }}</td>
+  <section class="links-list" *ngIf="!loading && links.length; else emptyState">
+    <article class="link-card" *ngFor="let link of links">
+      <div class="link-left">
+        <div class="link-color-bar"></div>
 
-          <td class="truncate" [title]="link.url">
+        <div class="link-info">
+          <div class="link-title">{{ link.title || 'Sem título' }}</div>
+
+          <div class="link-short" [title]="link.short_url || link.url">
+            {{ link.short_url || link.url }}
+          </div>
+
+          <div class="link-original" [title]="link.url">
             {{ link.url }}
-          </td>
+          </div>
 
-          <td class="truncate" [title]="link.short_url || 'Gerada automaticamente'">
-            <ng-container *ngIf="link.short_url; else noShort">
-              {{ link.short_url }}
-            </ng-container>
-            <ng-template #noShort>
-              <span class="muted">Será gerada ao salvar</span>
-            </ng-template>
-          </td>
+          <div class="link-meta">
+            <span class="meta-pill">Cliques: {{ link.clicks || 0 }}</span>
+          </div>
 
-          <td>{{ link.clicks || 0 }}</td>
+          <div class="tags-row" *ngIf="link.tags?.length">
+            <span class="tag-pill" *ngFor="let tag of link.tags">
+              {{ tag }}
+            </span>
+          </div>
+        </div>
+      </div>
 
-          <td class="actions">
-            <button (click)="openEditModal(link)">Editar</button>
-            <button class="secondary" (click)="copyShortUrl(link)">Copiar</button>
-            <button class="danger" (click)="deleteLink(link)">Excluir</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      <div class="link-actions">
+        <button class="icon-button" title="Copiar link" (click)="copyShortUrl(link)">
+          Copiar
+        </button>
+        <button class="icon-button" title="Editar" (click)="openEditModal(link)">
+          Editar
+        </button>
+        <button class="icon-button danger" title="Excluir" (click)="deleteLink(link)">
+          Excluir
+        </button>
+      </div>
+    </article>
+  </section>
 
-  <p *ngIf="!loading && !links?.length" class="empty-state">
-    Nenhum link cadastrado ainda. Clique em "Novo link" para criar o primeiro.
-  </p>
+  <ng-template #emptyState>
+    <p class="empty-state">
+      Nenhum link cadastrado ainda. Clique em “Novo Link” para criar o primeiro.
+    </p>
+  </ng-template>
 
   <!-- MODAL -->
   <div class="modal-backdrop" *ngIf="isModalOpen">

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { forkJoin } from 'rxjs';
 import { ApiService, Collection, Link } from '../../core/services/api.service';
+import { forkJoin, of } from 'rxjs';
 
 @Component({
   selector: 'app-colecoes-page',
@@ -9,23 +9,23 @@ import { ApiService, Collection, Link } from '../../core/services/api.service';
   styleUrls: ['./colecoes-page.component.scss']
 })
 export class ColecoesPageComponent implements OnInit {
-  colecoes: Collection[] = [];
+  collections: Collection[] = [];
   links: Link[] = [];
 
-  colecaoForm: FormGroup;
+  collectionForm: FormGroup;
   isModalOpen = false;
   editingCollection: Collection | null = null;
   loading = false;
   saving = false;
 
-  // IDs de links selecionados para a coleção atual (no modal)
-  selectedLinkIds = new Set<string>();
+  // ids dos links selecionados na coleção sendo editada
+  selectedLinkIds: string[] = [];
 
   constructor(
     private api: ApiService,
     private fb: FormBuilder
   ) {
-    this.colecaoForm = this.fb.group({
+    this.collectionForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],
       visibility: ['publico', Validators.required]
@@ -40,8 +40,8 @@ export class ColecoesPageComponent implements OnInit {
   loadCollections(): void {
     this.loading = true;
     this.api.getCollections().subscribe({
-      next: (list) => {
-        this.colecoes = list;
+      next: (data) => {
+        this.collections = data || [];
         this.loading = false;
       },
       error: (err) => {
@@ -54,7 +54,7 @@ export class ColecoesPageComponent implements OnInit {
   loadLinks(): void {
     this.api.getLinks().subscribe({
       next: (links) => {
-        this.links = links;
+        this.links = links || [];
       },
       error: (err) => {
         console.error('Erro ao carregar links', err);
@@ -65,149 +65,137 @@ export class ColecoesPageComponent implements OnInit {
   openCreateModal(): void {
     this.isModalOpen = true;
     this.editingCollection = null;
-    this.colecaoForm.reset({ visibility: 'publico' });
-    this.selectedLinkIds = new Set<string>();
+    this.selectedLinkIds = [];
+    this.collectionForm.reset({
+      name: '',
+      description: '',
+      visibility: 'publico'
+    });
   }
 
-  openEditModal(collection: Collection): void {
+  openEditModal(c: Collection): void {
     this.isModalOpen = true;
-    this.editingCollection = collection;
+    this.editingCollection = c;
 
-    this.colecaoForm.patchValue({
-      name: collection.name,
-      description: collection.description || '',
-      visibility: collection.visibility || 'publico'
+    this.collectionForm.patchValue({
+      name: c.name,
+      description: c.description || '',
+      visibility: c.visibility || 'publico'
     });
 
-    // Pré-seleciona os links que já pertencem a esta coleção
-    this.selectedLinkIds = new Set<string>(
-      this.links
-        .filter((l) => l.collection_id === collection.id)
-        .map((l) => String(l.id))
-    );
+    // marca como selecionados os links que já pertencem a esta coleção
+    this.selectedLinkIds = this.links
+      .filter((l) => l.collection_id === c.id)
+      .map((l) => l.id!)
+      .filter(Boolean);
   }
 
   closeModal(): void {
     this.isModalOpen = false;
   }
 
-  onToggleLinkSelection(link: Link, checked: boolean): void {
-    if (!link.id) return;
+  isLinkSelected(link: Link): boolean {
+    return this.selectedLinkIds.includes(link.id!);
+  }
 
-    const id = String(link.id);
+  toggleLinkSelection(link: Link, checked: boolean): void {
+    const id = link.id;
+    if (!id) return;
 
     if (checked) {
-      this.selectedLinkIds.add(id);
+      if (!this.selectedLinkIds.includes(id)) {
+        this.selectedLinkIds.push(id);
+      }
     } else {
-      this.selectedLinkIds.delete(id);
+      this.selectedLinkIds = this.selectedLinkIds.filter((x) => x !== id);
     }
   }
 
   saveCollection(): void {
-    if (this.colecaoForm.invalid) {
-      this.colecaoForm.markAllAsTouched();
+    if (this.collectionForm.invalid) {
+      this.collectionForm.markAllAsTouched();
       return;
     }
 
     this.saving = true;
+    const payload = this.collectionForm.value;
 
-    const payload: Partial<Collection> = this.colecaoForm.value;
-
-    // Editar coleção existente
     if (this.editingCollection && this.editingCollection.id) {
-      const collectionId = String(this.editingCollection.id);
+      const collectionId = this.editingCollection.id;
 
       this.api.updateCollection(collectionId, payload).subscribe({
         next: () => {
-          this.updateLinksForCollection(collectionId);
+          this.saveCollectionLinks(collectionId);
         },
         error: (err) => {
-          console.error('Erro ao atualizar coleção', err);
           this.saving = false;
+          console.error('Erro ao atualizar coleção', err);
         }
       });
     } else {
-      // Criar nova coleção
       this.api.createCollection(payload).subscribe({
-        next: (created) => {
-          const collectionId = String(created.id);
-          this.updateLinksForCollection(collectionId);
+        next: (created: Collection) => {
+          const collectionId = created.id!;
+          this.saveCollectionLinks(collectionId);
         },
         error: (err) => {
-          console.error('Erro ao criar coleção', err);
           this.saving = false;
+          console.error('Erro ao criar coleção', err);
         }
       });
     }
   }
 
-  private updateLinksForCollection(collectionId: string): void {
-    const ops = [];
+  /**
+   * Atualiza os links para pertencerem (ou não) a esta coleção.
+   * Usa updateLink alterando apenas o collection_id.
+   */
+  private saveCollectionLinks(collectionId: string): void {
+    const updates = this.links.map((link) => {
+      if (!link.id) return of(null);
 
-    for (const link of this.links) {
-      if (!link.id) continue;
+      const shouldBelong = this.selectedLinkIds.includes(link.id);
+      const currentlyBelongs = link.collection_id === collectionId;
 
-      const linkId = String(link.id);
-      const isSelected = this.selectedLinkIds.has(linkId);
-      const isCurrentlyInCollection = link.collection_id === collectionId;
-
-      // Caso 1: marcado e ainda não estava na coleção → adiciona
-      if (isSelected && !isCurrentlyInCollection) {
-        ops.push(
-          this.api.updateLink(linkId, {
-            collection_id: collectionId
-          })
-        );
+      if (shouldBelong === currentlyBelongs) {
+        // nada a mudar
+        return of(null);
       }
 
-      // Caso 2: desmarcado e antes estava nessa coleção → remove
-      if (!isSelected && isCurrentlyInCollection) {
-        ops.push(
-          this.api.updateLink(linkId, {
-            collection_id: null
-          })
-        );
-      }
-    }
+      return this.api.updateLink(link.id, {
+        collection_id: shouldBelong ? collectionId : null
+      });
+    });
 
-    if (ops.length === 0) {
-      this.finishSave();
-      return;
-    }
-
-    forkJoin(ops).subscribe({
+    forkJoin(updates).subscribe({
       next: () => {
-        this.finishSave();
+        this.saving = false;
+        this.loadCollections();
+        this.loadLinks();
+        this.closeModal();
       },
       error: (err) => {
+        this.saving = false;
         console.error('Erro ao atualizar links da coleção', err);
-        this.finishSave();
       }
     });
   }
 
-  private finishSave(): void {
-    this.saving = false;
-    this.isModalOpen = false;
-    this.loadCollections();
-    this.loadLinks();
-  }
+  deleteCollection(c: Collection): void {
+    if (!c.id) return;
+    if (!confirm('Deseja realmente excluir esta coleção?')) return;
 
-  deleteCollection(col: Collection): void {
-    if (!col.id) return;
-    if (
-      !confirm(
-        'Excluir esta coleção? Os links continuarão existindo, mas sem coleção.'
-      )
-    )
-      return;
-
-    this.api.deleteCollection(String(col.id)).subscribe({
+    this.api.deleteCollection(c.id).subscribe({
       next: () => {
         this.loadCollections();
         this.loadLinks();
       },
       error: (err) => console.error('Erro ao excluir coleção', err)
     });
+  }
+
+  // usado no card para mostrar "X links" na coleção
+  linksInCollection(c: Collection): number {
+    return this.links.filter((l) => l.collection_id === c.id).length;
   }
 }
