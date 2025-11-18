@@ -13,6 +13,7 @@ export class LinksPageComponent implements OnInit {
   isModalOpen = false;
   editingLink: Link | null = null;
   loading = false;
+  saving = false;
 
   constructor(
     private api: ApiService,
@@ -20,8 +21,7 @@ export class LinksPageComponent implements OnInit {
   ) {
     this.linkForm = this.fb.group({
       title: ['', Validators.required],
-      url: ['', Validators.required],
-      short_url: [''],
+      url: ['', [Validators.required]],
       tagsText: [''],
       collection_id: [null]
     });
@@ -57,7 +57,6 @@ export class LinksPageComponent implements OnInit {
     this.linkForm.patchValue({
       title: link.title,
       url: link.url,
-      short_url: link.short_url,
       tagsText: link.tags?.join(', ') || '',
       collection_id: link.collection_id || null
     });
@@ -73,6 +72,8 @@ export class LinksPageComponent implements OnInit {
       return;
     }
 
+    this.saving = true;
+
     const formValue = this.linkForm.value;
     const tags =
       formValue.tagsText
@@ -83,7 +84,6 @@ export class LinksPageComponent implements OnInit {
     const payload: Partial<Link> = {
       title: formValue.title,
       url: formValue.url,
-      short_url: formValue.short_url,
       tags,
       collection_id: formValue.collection_id
     };
@@ -91,18 +91,26 @@ export class LinksPageComponent implements OnInit {
     if (this.editingLink && this.editingLink.id) {
       this.api.updateLink(this.editingLink.id, payload).subscribe({
         next: () => {
+          this.saving = false;
           this.loadLinks();
           this.closeModal();
         },
-        error: (err) => console.error('Erro ao atualizar link', err)
+        error: (err) => {
+          this.saving = false;
+          console.error('Erro ao atualizar link', err);
+        }
       });
     } else {
       this.api.createLink(payload).subscribe({
         next: () => {
+          this.saving = false;
           this.loadLinks();
           this.closeModal();
         },
-        error: (err) => console.error('Erro ao criar link', err)
+        error: (err) => {
+          this.saving = false;
+          console.error('Erro ao criar link', err);
+        }
       });
     }
   }
@@ -117,5 +125,16 @@ export class LinksPageComponent implements OnInit {
       },
       error: (err) => console.error('Erro ao excluir link', err)
     });
+  }
+
+  async copyShortUrl(link: Link): Promise<void> {
+    const urlToCopy = link.short_url || link.url;
+
+    try {
+      await navigator.clipboard.writeText(urlToCopy);
+      alert('URL copiada para a área de transferência!');
+    } catch (err) {
+      console.error('Erro ao copiar URL', err);
+    }
   }
 }

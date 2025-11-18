@@ -1,0 +1,175 @@
+.links-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 1.3rem;
+  margin-bottom: 0.1rem;
+}
+
+.header p {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.loading {
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.table-wrapper {
+  border-radius: 0.75rem;
+  border: 1px solid #1f2937;
+  overflow: hidden;
+  background: #020617;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+thead {
+  background: #020617;
+}
+
+th,
+td {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid #111827;
+  text-align: left;
+}
+
+th {
+  font-weight: 500;
+  color: #9ca3af;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.truncate {
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.actions button {
+  cursor: pointer;
+  border-radius: 999px;
+  border: none;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+}
+
+.actions button:hover {
+  opacity: 0.9;
+}
+
+.actions .danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+}
+
+.empty-state {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* Modal genérico */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal {
+  background: #020617;
+  border-radius: 0.9rem;
+  border: 1px solid #1f2937;
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 1rem;
+}
+
+.modal-close {
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+.modal label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.modal input,
+.modal textarea {
+  background: #020617;
+  border-radius: 0.5rem;
+  border: 1px solid #1f2937;
+  padding: 0.45rem 0.6rem;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.modal-footer button {
+  border-radius: 999px;
+  border: none;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.modal-footer button[type='button'] {
+  background: #020617;
+  border: 1px solid #1f2937;
+}
+
+.modal-footer button[type='submit'] {
+  background: #3b82f6;
+  color: white;
+}

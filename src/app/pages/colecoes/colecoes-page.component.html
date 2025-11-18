@@ -1,27 +1,38 @@
 <div class="colecoes-page">
   <div class="header">
-    <h1>Coleções</h1>
-    <button (click)="openCreateModal()">Nova coleção</button>
+    <div>
+      <h1>Coleções</h1>
+      <p>Agrupe seus links em coleções temáticas.</p>
+    </div>
+    <button class="primary-button" (click)="openCreateModal()">Nova coleção</button>
   </div>
 
-  <div *ngIf="loading">Carregando...</div>
+  <div *ngIf="loading" class="loading">Carregando coleções...</div>
 
-  <ul *ngIf="!loading && colecoes.length">
-    <li *ngFor="let c of colecoes">
-      <div>
-        <strong>{{ c.name }}</strong>
-        <span> – {{ c.description }}</span>
-        <span> ({{ c.visibility }})</span>
+  <div class="collections-grid" *ngIf="!loading && colecoes?.length">
+    <div class="collection-card" *ngFor="let c of colecoes">
+      <div class="collection-header">
+        <div>
+          <h2>{{ c.name }}</h2>
+          <p class="collection-description">
+            {{ c.description || 'Sem descrição' }}
+          </p>
+        </div>
+        <span class="badge">{{ c.visibility }}</span>
       </div>
-      <div class="actions">
+
+      <div class="collection-footer">
         <button (click)="openEditModal(c)">Editar</button>
-        <button (click)="deleteCollection(c)">Excluir</button>
+        <button class="danger" (click)="deleteCollection(c)">Excluir</button>
       </div>
-    </li>
-  </ul>
+    </div>
+  </div>
 
-  <p *ngIf="!loading && !colecoes.length">Nenhuma coleção cadastrada ainda.</p>
+  <p *ngIf="!loading && !colecoes?.length" class="empty-state">
+    Nenhuma coleção cadastrada ainda. Clique em "Nova coleção" para começar.
+  </p>
 
+  <!-- MODAL -->
   <div class="modal-backdrop" *ngIf="isModalOpen">
     <div class="modal">
       <div class="modal-header">
@@ -49,9 +60,32 @@
           </select>
         </label>
 
+        <div class="links-selector" *ngIf="links?.length">
+          <div class="links-selector-header">
+            <span>Links desta coleção</span>
+            <small>Marque os links que devem pertencer a esta coleção.</small>
+          </div>
+
+          <div class="links-selector-list">
+            <label *ngFor="let link of links" class="links-selector-item">
+              <input
+                type="checkbox"
+                [checked]="link.id ? selectedLinkIds.has(link.id.toString()) : false"
+                (change)="onToggleLinkSelection(link, $event.target.checked)"
+              />
+              <div class="links-selector-text">
+                <div class="title">{{ link.title || 'Sem título' }}</div>
+                <div class="url">{{ link.short_url || link.url }}</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
         <div class="modal-footer">
           <button type="button" (click)="closeModal()">Cancelar</button>
-          <button type="submit" [disabled]="colecaoForm.invalid">Salvar</button>
+          <button type="submit" [disabled]="colecaoForm.invalid || saving">
+            {{ saving ? 'Salvando...' : 'Salvar' }}
+          </button>
         </div>
       </form>
     </div>

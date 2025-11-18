@@ -1,0 +1,147 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #1d4ed8 0, #020617 55%, #000 100%);
+  color: #e5e7eb;
+  padding: 1rem;
+}
+
+.auth-card {
+  background: #020617;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 2rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.8);
+}
+
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.auth-logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #020617;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-logo-mark {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #3b82f6, #22c55e);
+}
+
+.auth-logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-logo-title {
+  font-weight: 600;
+}
+
+.auth-logo-subtitle {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.auth-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.auth-subtitle {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.auth-field label {
+  font-size: 0.8rem;
+}
+
+.auth-field input {
+  border-radius: 0.6rem;
+  border: 1px solid #1f2937;
+  background: #020617;
+  padding: 0.5rem 0.75rem;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.auth-field input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.auth-button {
+  margin-top: 0.5rem;
+  width: 100%;
+  border-radius: 999px;
+  border: none;
+  padding: 0.6rem 0.9rem;
+  background: linear-gradient(135deg, #3b82f6, #22c55e);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.auth-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.auth-toggle {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.auth-toggle .link {
+  background: none;
+  border: none;
+  color: #60a5fa;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.25rem;
+}
+
+.auth-error {
+  font-size: 0.75rem;
+  color: #fca5a5;
+}
+
+.auth-error.global {
+  margin-top: 0.5rem;
+}
+    

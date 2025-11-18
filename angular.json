@@ -48,5 +48,8 @@
       }
     }
   },
-  "defaultProject": "linkhub-frontend"
+  "defaultProject": "linkhub-frontend",
+  "cli": {
+    "analytics": false
+  }
 }

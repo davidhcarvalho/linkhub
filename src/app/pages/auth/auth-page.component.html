@@ -1,55 +1,72 @@
-<div class="login-page">
-  <div class="login-logo">
-    <div class="logo-icon">
-      <span class="logo-mark"></span>
-    </div>
-    <div class="login-logo-text">Linkhub</div>
-  </div>
-
-  <div class="login-card">
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <h2>{{ isRegisterMode ? 'Criar conta' : 'Entrar' }}</h2>
-
-      <div class="login-field">
-        <label>E-mail</label>
-        <input type="email" formControlName="email" placeholder="seu@email.com" />
-        <div class="login-error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
-          <span *ngIf="loginForm.get('email')?.errors?.['required']">E-mail é obrigatório.</span>
-          <span *ngIf="loginForm.get('email')?.errors?.['email']">E-mail inválido.</span>
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">
+        <div class="auth-logo-icon">
+          <span class="auth-logo-mark"></span>
+        </div>
+        <div class="auth-logo-text">
+          <span class="auth-logo-title">Linkhub</span>
+          <span class="auth-logo-subtitle">Seu hub de links encurtados</span>
         </div>
       </div>
 
-      <div class="login-field">
-        <label>Senha</label>
-        <input type="password" formControlName="password" placeholder="********" />
-        <div class="login-error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+      <h2 class="auth-title">
+        {{ isRegisterMode ? 'Crie sua conta' : 'Bem-vindo de volta' }}
+      </h2>
+      <p class="auth-subtitle">
+        {{
+          isRegisterMode
+            ? 'Cadastre-se para organizar e encurtar seus links.'
+            : 'Entre para acessar seus links e coleções.'
+        }}
+      </p>
+    </div>
+
+    <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="auth-field">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" formControlName="email" placeholder="seu@email.com" />
+        <div class="auth-error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+          <span *ngIf="loginForm.get('email')?.errors?.['required']">E-mail é obrigatório.</span>
+          <span *ngIf="loginForm.get('email')?.errors?.['email']">Digite um e-mail válido.</span>
+        </div>
+      </div>
+
+      <div class="auth-field">
+        <label for="password">Senha</label>
+        <input id="password" type="password" formControlName="password" placeholder="********" />
+        <div
+          class="auth-error"
+          *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+        >
           <span *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória.</span>
           <span *ngIf="loginForm.get('password')?.errors?.['minlength']">
-            Senha deve ter pelo menos 6 caracteres.
+            Mínimo de 6 caracteres.
           </span>
         </div>
       </div>
 
-      <button type="submit" [disabled]="authLoading">
+      <button class="auth-button" type="submit" [disabled]="authLoading || loginForm.invalid">
         {{
           authLoading
             ? (isRegisterMode ? 'Criando conta...' : 'Entrando...')
-            : (isRegisterMode ? 'Criar Conta' : 'Entrar')
+            : (isRegisterMode ? 'Criar conta' : 'Entrar')
         }}
       </button>
 
-      <div class="login-switch">
+      <div class="auth-toggle">
         <ng-container *ngIf="!isRegisterMode">
           Não tem conta?
-          <a href="#" (click)="toggleMode($event)">Criar conta</a>
+          <button type="button" class="link" (click)="toggleMode($event)">Criar conta</button>
         </ng-container>
         <ng-container *ngIf="isRegisterMode">
           Já tem conta?
-          <a href="#" (click)="toggleMode($event)">Entrar</a>
+          <button type="button" class="link" (click)="toggleMode($event)">Entrar</button>
         </ng-container>
       </div>
 
-      <div class="login-error global" *ngIf="authError">
+      <div class="auth-error global" *ngIf="authError">
         {{ authError }}
       </div>
     </form>

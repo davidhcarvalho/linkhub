@@ -1,22 +1,23 @@
 <div class="dashboard">
   <header class="main-header">
     <div class="welcome-block">
-      <div class="welcome-title">Bem-vindo!</div>
-      <div class="welcome-subtitle">
-        Gerencie seus links e coleções de forma inteligente.
-      </div>
+      <div class="welcome-badge">Dashboard</div>
+      <h1 class="welcome-title">Visão geral dos seus links</h1>
+      <p class="welcome-subtitle">
+        Acompanhe links, coleções e desempenho de cliques em um só lugar.
+      </p>
     </div>
   </header>
 
-  <div *ngIf="loading">Carregando...</div>
+  <div *ngIf="loading" class="loading">Carregando dados...</div>
 
   <section class="dashboard-metrics" *ngIf="!loading && metrics">
     <div class="metric-card">
-      <div class="metric-label">Total Links</div>
+      <div class="metric-label">Links cadastrados</div>
       <div class="metric-value">{{ metrics.linksTotal }}</div>
     </div>
     <div class="metric-card">
-      <div class="metric-label">Total Coleções</div>
+      <div class="metric-label">Coleções</div>
       <div class="metric-value">{{ metrics.collectionsTotal }}</div>
     </div>
     <div class="metric-card">
@@ -31,21 +32,41 @@
 
   <section class="dashboard-grid" *ngIf="!loading">
     <div class="dashboard-panel">
-      <h2>Links recentes</h2>
-      <ul>
+      <div class="panel-header">
+        <h2>Links recentes</h2>
+        <a routerLink="/links">Ver todos</a>
+      </div>
+      <ul class="item-list" *ngIf="recentLinks?.length; else noLinks">
         <li *ngFor="let link of recentLinks">
-          {{ link.title }} — {{ link.short_url || link.url }}
+          <div class="item-main">
+            <div class="item-title">{{ link.title || link.url }}</div>
+            <div class="item-sub">
+              {{ link.short_url || link.url }}
+            </div>
+          </div>
         </li>
       </ul>
+      <ng-template #noLinks>
+        <p class="empty-state">Você ainda não cadastrou nenhum link.</p>
+      </ng-template>
     </div>
 
     <div class="dashboard-panel">
-      <h2>Coleções recentes</h2>
-      <ul>
+      <div class="panel-header">
+        <h2>Coleções recentes</h2>
+        <a routerLink="/colecoes">Ver todas</a>
+      </div>
+      <ul class="item-list" *ngIf="recentCollections?.length; else noCollections">
         <li *ngFor="let c of recentCollections">
-          {{ c.name }} — {{ c.visibility }}
+          <div class="item-main">
+            <div class="item-title">{{ c.name }}</div>
+            <div class="item-sub">{{ c.description || 'Sem descrição' }}</div>
+          </div>
         </li>
       </ul>
+      <ng-template #noCollections>
+        <p class="empty-state">Você ainda não criou nenhuma coleção.</p>
+      </ng-template>
     </div>
   </section>
 </div>
