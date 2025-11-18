@@ -1,33 +1,56 @@
-<div class="app-container">
+<div class="app-shell">
   <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-icon">
-        <span class="logo-mark"></span>
+    <div class="sidebar-top">
+      <!-- LOGO -->
+      <div class="logo-row">
+        <img
+          src="../../../assets/logo/Linkhub.png"
+          alt="Linkhub"
+          class="sidebar-logo"
+        />
       </div>
-      <div class="logo-text">
-        <span class="logo-title">Linkhub</span>
-        <span class="logo-subtitle">Seu hub de links</span>
-      </div>
+      <p class="sidebar-tagline">Seu hub de links</p>
+
+      <!-- BOTÃO NOVO LINK -->
+      <button class="sidebar-new-link" routerLink="/links">
+        + Novo Link
+      </button>
+
+      <!-- MENU PRINCIPAL -->
+      <div class="sidebar-section-label">MENU PRINCIPAL</div>
+      <nav class="sidebar-nav">
+        <a routerLink="/dashboard" routerLinkActive="active">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a routerLink="/links" routerLinkActive="active">
+          <span class="nav-icon">🔗</span>
+          <span class="nav-label">Meus Links</span>
+        </a>
+        <a routerLink="/colecoes" routerLinkActive="active">
+          <span class="nav-icon">📁</span>
+          <span class="nav-label">Coleções</span>
+        </a>
+      </nav>
     </div>
 
-    <button class="primary-button full-width" routerLink="/links">
-      <span class="plus-icon">+</span>
-      Novo Link
-    </button>
+    <!-- RODAPÉ -->
+    <div class="sidebar-bottom">
+      <div class="sidebar-email">linkhub&#64;gmail.com</div>
 
-    <nav class="sidebar-menu">
-      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-      <a routerLink="/links" routerLinkActive="active">Meus Links</a>
-      <a routerLink="/colecoes" routerLinkActive="active">Coleções</a>
-    </nav>
+      <div class="sidebar-user">
+        <div class="user-avatar">👤</div>
+        <div class="user-info">
+          <span class="user-name">Linkhub</span>
+          <span class="user-status">Conta ativa</span>
+        </div>
+      </div>
 
-    <div class="sidebar-footer">
-      <button class="ghost-button" (click)="logout()">Sair</button>
-      <div class="sidebar-hint">Trabalho de Desenvolvimento Web</div>
+      <button class="sidebar-logout" (click)="logout()">Sair</button>
     </div>
   </aside>
 
-  <main class="main-content">
+  <main class="main-area">
     <router-outlet></router-outlet>
   </main>
 </div>

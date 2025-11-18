@@ -1,71 +1,170 @@
 <div class="dashboard">
-  <header class="main-header">
-    <div class="welcome-block">
-      <div class="welcome-badge">Dashboard</div>
-      <h1 class="welcome-title">Visão geral dos seus links</h1>
-      <p class="welcome-subtitle">
-        Acompanhe links, coleções e desempenho de cliques em um só lugar.
-      </p>
+
+  <!-- TOPO: saudação + botões -->
+  <header class="dash-header">
+    <div class="dash-welcome">
+      <h1>Bem-vindo!</h1>
+      <p>Gerencie seus links e coleções de forma inteligente.</p>
+    </div>
+
+    <div class="dash-actions">
+      <button class="pill-button secondary" routerLink="/links">
+        <span>+ Novo Link</span>
+      </button>
+      <!-- Botão de encurtar não existe como funcionalidade separada, então só um CTA genérico -->
+      <button class="pill-button ghost" routerLink="/links">
+        <span>Ver Meus Links</span>
+      </button>
     </div>
   </header>
 
-  <div *ngIf="loading" class="loading">Carregando dados...</div>
+  <!-- MÉTRICAS -->
+  <section class="dash-metrics">
+    <div class="metric-card">
+      <div class="metric-label">Total Links</div>
+      <div class="metric-value">
+        {{ metrics?.linksTotal || 0 }}
+      </div>
+      <div class="metric-icon">
+        <span>🔗</span>
+      </div>
+    </div>
 
-  <section class="dashboard-metrics" *ngIf="!loading && metrics">
     <div class="metric-card">
-      <div class="metric-label">Links cadastrados</div>
-      <div class="metric-value">{{ metrics.linksTotal }}</div>
+      <div class="metric-label">Total Coleções</div>
+      <div class="metric-value">
+        {{ metrics?.collectionsTotal || 0 }}
+      </div>
+      <div class="metric-icon">
+        <span>📦</span>
+      </div>
     </div>
-    <div class="metric-card">
-      <div class="metric-label">Coleções</div>
-      <div class="metric-value">{{ metrics.collectionsTotal }}</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-label">Visualizações</div>
-      <div class="metric-value">{{ metrics.totalViews }}</div>
-    </div>
+
     <div class="metric-card">
       <div class="metric-label">Compartilhamentos</div>
-      <div class="metric-value">{{ metrics.totalShares }}</div>
+      <div class="metric-value">
+        {{ metrics?.totalShares || 0 }}
+      </div>
+      <div class="metric-icon">
+        <span>📤</span>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">Visualizações</div>
+      <div class="metric-value">
+        {{ metrics?.totalViews || 0 }}
+      </div>
+      <div class="metric-icon">
+        <span>👁️</span>
+      </div>
     </div>
   </section>
 
-  <section class="dashboard-grid" *ngIf="!loading">
-    <div class="dashboard-panel">
+  <div *ngIf="loading" class="dash-loading">
+    Carregando dados...
+  </div>
+
+  <!-- GRID PRINCIPAL: Links recentes + Minhas coleções -->
+  <section class="dash-main" *ngIf="!loading">
+    <!-- LINKS RECENTES -->
+    <div class="panel panel-links">
       <div class="panel-header">
-        <h2>Links recentes</h2>
-        <a routerLink="/links">Ver todos</a>
+        <div class="panel-title">
+          <span class="panel-icon">📝</span>
+          <span>Links recentes:</span>
+        </div>
+        <a routerLink="/links" class="panel-link">Ver todos os links</a>
       </div>
-      <ul class="item-list" *ngIf="recentLinks?.length; else noLinks">
-        <li *ngFor="let link of recentLinks">
-          <div class="item-main">
-            <div class="item-title">{{ link.title || link.url }}</div>
-            <div class="item-sub">
+
+      <div *ngIf="recentLinks?.length; else noLinks">
+        <div class="link-card" *ngFor="let link of recentLinks">
+          <div class="link-main">
+            <div class="link-title">{{ link.title || 'Sem título' }}</div>
+            <div class="link-url">
               {{ link.short_url || link.url }}
             </div>
+
+            <div class="link-tags" *ngIf="link.tags?.length">
+              <span class="tag" *ngFor="let tag of link.tags">
+                {{ tag }}
+              </span>
+            </div>
           </div>
-        </li>
-      </ul>
+
+          <div class="link-actions">
+            <!-- Apenas visuais, sem funcionalidade obrigatória -->
+            <button type="button" title="Abrir link">
+              <span>🔗</span>
+            </button>
+            <button type="button" title="Copiar">
+              <span>📋</span>
+            </button>
+            <button type="button" title="Compartilhar">
+              <span>📤</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <ng-template #noLinks>
-        <p class="empty-state">Você ainda não cadastrou nenhum link.</p>
+        <p class="empty-text">
+          Nenhum link cadastrado ainda. Crie seu primeiro link em “Meus Links”.
+        </p>
       </ng-template>
     </div>
 
-    <div class="dashboard-panel">
+    <!-- MINHAS COLEÇÕES -->
+    <div class="panel panel-collections">
       <div class="panel-header">
-        <h2>Coleções recentes</h2>
-        <a routerLink="/colecoes">Ver todas</a>
+        <div class="panel-title">
+          <span class="panel-icon">📁</span>
+          <span>Minhas Coleções:</span>
+        </div>
+        <a routerLink="/colecoes" class="panel-link">Ver todas</a>
       </div>
-      <ul class="item-list" *ngIf="recentCollections?.length; else noCollections">
-        <li *ngFor="let c of recentCollections">
-          <div class="item-main">
-            <div class="item-title">{{ c.name }}</div>
-            <div class="item-sub">{{ c.description || 'Sem descrição' }}</div>
+
+      <div class="collections-grid" *ngIf="recentCollections?.length; else noCollections">
+        <div class="collection-card" *ngFor="let c of recentCollections">
+          <div class="collection-icon">
+            <!-- só um círculo colorido, sem ícone dinâmico -->
+            <span>{{ c.name?.charAt(0) || 'C' }}</span>
           </div>
-        </li>
-      </ul>
+
+          <div class="collection-main">
+            <div class="collection-name">
+              {{ c.name }}
+            </div>
+            <div class="collection-description">
+              {{ c.description || 'Descrição não informada' }}
+            </div>
+
+            <div class="collection-meta">
+              <!-- placeholder simples, sem contagem real -->
+              <span class="meta-item">
+                👁️ 0
+              </span>
+              <span class="meta-item">
+                👥 {{ c.visibility || 'publico' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card “Criar nova coleção” visual -->
+        <div class="collection-card create-card" routerLink="/colecoes">
+          <div class="create-icon">＋</div>
+          <div class="create-text">
+            <div>Criar Nova Coleção</div>
+            <small>Organize seus links em categorias.</small>
+          </div>
+        </div>
+      </div>
+
       <ng-template #noCollections>
-        <p class="empty-state">Você ainda não criou nenhuma coleção.</p>
+        <p class="empty-text">
+          Nenhuma coleção criada ainda. Comece clicando em “Coleções” no menu lateral.
+        </p>
       </ng-template>
     </div>
   </section>

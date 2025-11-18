@@ -12,7 +12,7 @@ import { ApiService } from '../../core/services/api.service';
 export class AuthPageComponent {
   loginForm: FormGroup;
   isRegisterMode = false;
-  authLoading = false;
+  loading = false;
   authError: string | null = null;
 
   constructor(
@@ -27,45 +27,48 @@ export class AuthPageComponent {
     });
   }
 
-  toggleMode(event: Event) {
-    event.preventDefault();
+  // Agora sem parâmetro, compatível com (click)="toggleMode()"
+  toggleMode(): void {
     this.isRegisterMode = !this.isRegisterMode;
     this.authError = null;
   }
 
-  async onSubmit() {
+  async onSubmit(): Promise<void> {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
+    this.loading = true;
     this.authError = null;
+
     const { email, password } = this.loginForm.value;
 
     try {
-      this.authLoading = true;
-      let user;
+      let user: any;
 
       if (this.isRegisterMode) {
         const result = await this.auth.signUp(email, password);
-        user = result.user;
+        user = (result as any).user || result;
       } else {
         const result = await this.auth.signIn(email, password);
-        user = result.user;
+        user = (result as any).user || result;
       }
 
-      // seta userId no ApiService
-      this.api.setUserId(user.id);
+      if (user && user.id) {
+        this.api.setUserId(user.id);
+      }
 
-      // navega para dashboard
       await this.router.navigate(['/dashboard']);
     } catch (err: any) {
       console.error(err);
       this.authError =
         err?.message ||
-        (this.isRegisterMode ? 'Erro ao criar conta' : 'Erro ao fazer login');
+        (this.isRegisterMode
+          ? 'Erro ao criar conta. Tente novamente.'
+          : 'Erro ao fazer login. Verifique seus dados.');
     } finally {
-      this.authLoading = false;
+      this.loading = false;
     }
   }
 }

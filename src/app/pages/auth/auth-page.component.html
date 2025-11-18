@@ -1,74 +1,103 @@
 <div class="auth-page">
   <div class="auth-card">
-    <div class="auth-header">
-      <div class="auth-logo">
-        <div class="auth-logo-icon">
-          <span class="auth-logo-mark"></span>
-        </div>
-        <div class="auth-logo-text">
-          <span class="auth-logo-title">Linkhub</span>
-          <span class="auth-logo-subtitle">Seu hub de links encurtados</span>
-        </div>
+    
+    <!-- LOGO -->
+    <img 
+      src="assets/logo/Linkhub.png"
+      alt="Linkhub Logo"
+      class="auth-logo"
+    />
+
+    <!-- Título -->
+    <h1 class="auth-title">{{ isRegisterMode ? 'Criar Conta' : 'Entrar' }}</h1>
+
+    <!-- Subtítulo -->
+    <p class="auth-subtitle">
+      {{
+        isRegisterMode
+          ? 'Crie sua conta para começar a encurtar e gerenciar links.'
+          : 'Acesse sua conta para visualizar e organizar seus links.'
+      }}
+    </p>
+
+    <!-- FORMULÁRIO -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+
+      <!-- Email -->
+      <div class="auth-input">
+        <i class="ph ph-envelope"></i>
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Seu e-mail"
+        />
       </div>
 
-      <h2 class="auth-title">
-        {{ isRegisterMode ? 'Crie sua conta' : 'Bem-vindo de volta' }}
-      </h2>
-      <p class="auth-subtitle">
-        {{
-          isRegisterMode
-            ? 'Cadastre-se para organizar e encurtar seus links.'
-            : 'Entre para acessar seus links e coleções.'
-        }}
-      </p>
+      <!-- Senha -->
+      <div class="auth-input">
+        <i class="ph ph-lock"></i>
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Sua senha"
+        />
+      </div>
+
+      <!-- Esqueci senha -->
+      <div class="auth-forgot" *ngIf="!isRegisterMode">
+        <a href="#">Esqueceu sua senha?</a>
+      </div>
+
+      <!-- Botão principal -->
+      <button
+        type="submit"
+        class="auth-button"
+        [disabled]="loginForm.invalid || loading"
+      >
+        {{ isRegisterMode ? 'Criar Conta' : 'Linkar' }}
+      </button>
+    </form>
+
+    <!-- Divisor -->
+    <div class="auth-divider">
+      <span>Ou continue com</span>
     </div>
 
-    <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="auth-field">
-        <label for="email">E-mail</label>
-        <input id="email" type="email" formControlName="email" placeholder="seu@email.com" />
-        <div class="auth-error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
-          <span *ngIf="loginForm.get('email')?.errors?.['required']">E-mail é obrigatório.</span>
-          <span *ngIf="loginForm.get('email')?.errors?.['email']">Digite um e-mail válido.</span>
-        </div>
-      </div>
-
-      <div class="auth-field">
-        <label for="password">Senha</label>
-        <input id="password" type="password" formControlName="password" placeholder="********" />
-        <div
-          class="auth-error"
-          *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
-        >
-          <span *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória.</span>
-          <span *ngIf="loginForm.get('password')?.errors?.['minlength']">
-            Mínimo de 6 caracteres.
-          </span>
-        </div>
-      </div>
-
-      <button class="auth-button" type="submit" [disabled]="authLoading || loginForm.invalid">
-        {{
-          authLoading
-            ? (isRegisterMode ? 'Criando conta...' : 'Entrando...')
-            : (isRegisterMode ? 'Criar conta' : 'Entrar')
-        }}
+    <!-- Botões Sociais -->
+    <div class="auth-socials">
+      <button class="social-btn google">
+        <img src="assets/icons/google.svg" />
+        Google
       </button>
 
-      <div class="auth-toggle">
-        <ng-container *ngIf="!isRegisterMode">
-          Não tem conta?
-          <button type="button" class="link" (click)="toggleMode($event)">Criar conta</button>
-        </ng-container>
-        <ng-container *ngIf="isRegisterMode">
-          Já tem conta?
-          <button type="button" class="link" (click)="toggleMode($event)">Entrar</button>
-        </ng-container>
-      </div>
+      <button class="social-btn github">
+        <img src="assets/icons/github.svg" />
+        Github
+      </button>
+    </div>
 
-      <div class="auth-error global" *ngIf="authError">
-        {{ authError }}
-      </div>
-    </form>
+    <!-- Troca Login ↔ Criar conta -->
+    <p class="auth-switch">
+      {{
+        isRegisterMode
+          ? 'Já tem uma conta?'
+          : 'Não tem uma conta?'
+      }}
+      <button type="button" (click)="toggleMode()">
+        {{
+          isRegisterMode
+            ? 'Entrar'
+            : 'Criar Conta'
+        }}
+      </button>
+    </p>
+
+    <!-- Termos -->
+    <p class="auth-terms">
+      Ao continuar você concorda com os nossos
+      <a href="#">Termos de Serviço</a> e
+      <a href="#">Política de Privacidade</a>
+    </p>
+
   </div>
 </div>

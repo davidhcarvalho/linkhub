@@ -1,87 +1,129 @@
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.8rem;
+  color: #f9fafb;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
 }
 
-.main-header {
+/* HEADER */
+.dash-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-}
-
-.welcome-block {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.welcome-badge {
-  display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  font-size: 0.75rem;
-  color: #9ca3af;
 }
 
-.welcome-title {
-  font-size: 1.5rem;
+.dash-welcome h1 {
+  font-size: 1.9rem;
   font-weight: 600;
 }
 
-.welcome-subtitle {
+.dash-welcome p {
+  margin-top: 0.2rem;
   font-size: 0.9rem;
   color: #9ca3af;
 }
 
-.loading {
-  font-size: 0.9rem;
-  color: #9ca3af;
+.dash-actions {
+  display: flex;
+  gap: 0.8rem;
 }
 
-.dashboard-metrics {
+/* Botões do topo (usando paleta da tela de links) */
+.pill-button {
+  border-radius: 999px;
+  padding: 0.6rem 1.4rem;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.pill-button.secondary {
+  background: linear-gradient(90deg, #f472b6, #a855f7);
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(248, 113, 170, 0.5);
+}
+
+.pill-button.ghost {
+  background: transparent;
+  border: 1px solid #4b5563;
+  color: #e5e7eb;
+}
+
+/* MÉTRICAS – cards com paleta da tela de links */
+.dash-metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
 }
 
 .metric-card {
-  background: #020617;
-  border-radius: 0.9rem;
-  padding: 1rem;
-  border: 1px solid #1f2937;
+  background: #111119;
+  border-radius: 1rem;
+  border: 1px solid #1d1d26;
+  padding: 1rem 1.1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  justify-content: space-between;
+  position: relative;
+  box-shadow: 0 0 22px rgba(0, 0, 0, 0.35);
 }
 
 .metric-label {
-  font-size: 0.8rem;
-  color: #9ca3af;
+  font-size: 0.85rem;
+  color: #a1a1b5;
+  margin-bottom: 0.4rem;
 }
 
 .metric-value {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 600;
 }
 
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: 1.5rem;
+/* Todos os ícones com a mesma “bolinha” rosa/roxa */
+.metric-icon {
+  position: absolute;
+  right: 0.9rem;
+  top: 0.9rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 0.9rem;
+  background: linear-gradient(135deg, #f472b6, #a855f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 0 12px rgba(248, 113, 170, 0.6);
 }
 
-.dashboard-panel {
-  background: #020617;
-  border-radius: 0.9rem;
-  border: 1px solid #1f2937;
-  padding: 1rem;
+/* LOADING */
+.dash-loading {
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* GRID PRINCIPAL */
+.dash-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 1.4rem;
+}
+
+/* PAINÉIS (links recentes / minhas coleções) */
+.panel {
+  background: #111119;
+  border-radius: 1rem;
+  border: 1px solid #1d1d26;
+  padding: 1.1rem 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.9rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
 }
 
 .panel-header {
@@ -90,41 +132,195 @@
   align-items: center;
 }
 
-.panel-header h2 {
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  letter-spacing: 0.02em;
+}
+
+.panel-title span:last-child {
   font-size: 1rem;
 }
 
-.panel-header a {
-  font-size: 0.8rem;
-  color: #60a5fa;
-  text-decoration: none;
+.panel-icon {
+  font-size: 1.2rem;
 }
 
-.item-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.panel-link {
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  text-decoration: none;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid #374151;
+}
+
+.panel-link:hover {
+  border-color: #a855f7;
+}
+
+/* LINK CARDS (linha única, igual ao clima da tela de links) */
+.link-card {
+  background: #05050c;
+  border-radius: 0.9rem;
+  border: 1px solid #1d1d26;
+  padding: 0.9rem 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.link-main {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
 
-.item-main {
+.link-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.link-url {
+  font-size: 0.8rem;
+  color: #f97373;
+}
+
+.link-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.25rem;
+}
+
+.tag {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #181825;
+  color: #e5e7eb;
+  border: 1px solid #a855f7;
+}
+
+/* Ações do link EM LINHA (não coluna) */
+.link-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.3rem;
+}
+
+.link-actions button {
+  width: 28px;
+  height: 28px;
+  border-radius: 0.75rem;
+  border: 1px solid #374151;
+  background: #05050c;
+  color: #e5e7eb;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.link-actions button:hover {
+  border-color: #f472b6;
+}
+
+/* COLEÇÕES */
+.collections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.7rem;
+}
+
+.collection-card {
+  background: #05050c;
+  border-radius: 0.9rem;
+  border: 1px solid #1d1d26;
+  padding: 0.9rem;
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+.collection-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f472b6, #a855f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.collection-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.collection-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.collection-description {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.collection-meta {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+/* Card de criar coleção */
+.create-card {
+  justify-content: center;
+  cursor: pointer;
+  text-align: center;
+}
+
+.create-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px dashed #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #e5e7eb;
+}
+
+.create-text {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
 }
 
-.item-title {
-  font-size: 0.9rem;
-}
-
-.item-sub {
-  font-size: 0.8rem;
+.create-text small {
+  font-size: 0.75rem;
   color: #9ca3af;
 }
 
-.empty-state {
+.empty-text {
   font-size: 0.85rem;
   color: #6b7280;
+  margin-top: 0.5rem;
 }
