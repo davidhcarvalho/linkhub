@@ -23,18 +23,19 @@
   <div *ngIf="loading" class="loading">Carregando coleções...</div>
 
   <section class="collections-list" *ngIf="!loading && collections.length; else emptyState">
-
     <article class="collection-card" *ngFor="let c of collections">
-      <!-- TOPO GRADIENTE -->
-      <div class="card-header-gradient">
+      <!-- TOPO GRADIENTE (clique abre modal de links) -->
+      <div class="card-header-gradient" (click)="openCollectionLinks(c)">
         <div class="card-header-content">
           <div class="collection-name">{{ c.name }}</div>
-          <div class="collection-visibility">{{ c.visibility | titlecase }}</div>
+          <div class="collection-visibility">
+            {{ c.visibility | titlecase }}
+          </div>
         </div>
       </div>
 
-      <!-- CORPO -->
-      <div class="card-body">
+      <!-- CORPO (também clicável pra ver links) -->
+      <div class="card-body" (click)="openCollectionLinks(c)">
         <p class="collection-description">
           {{ c.description || 'Sem descrição definida.' }}
         </p>
@@ -47,8 +48,20 @@
         </div>
 
         <div class="card-footer-actions">
-          <button class="icon-button" (click)="openEditModal(c)">Editar</button>
-          <button class="icon-button danger" (click)="deleteCollection(c)">Excluir</button>
+          <button
+            class="icon-button"
+            type="button"
+            (click)="openEditModal(c); $event.stopPropagation()"
+          >
+            Editar
+          </button>
+          <button
+            class="icon-button danger"
+            type="button"
+            (click)="deleteCollection(c); $event.stopPropagation()"
+          >
+            Excluir
+          </button>
         </div>
       </div>
     </article>
@@ -60,7 +73,6 @@
         <span>Criar nova coleção</span>
       </button>
     </article>
-
   </section>
 
   <!-- ESTADO VAZIO -->
@@ -70,7 +82,7 @@
     </p>
   </ng-template>
 
-  <!-- MODAL -->
+  <!-- MODAL: CRIAR / EDITAR COLEÇÃO -->
   <div class="modal-backdrop" *ngIf="isModalOpen">
     <div class="modal">
       <div class="modal-header">
@@ -79,7 +91,6 @@
       </div>
 
       <form [formGroup]="collectionForm" (ngSubmit)="saveCollection()">
-
         <label>
           Nome
           <input type="text" formControlName="name" />
@@ -107,11 +118,16 @@
               <input
                 type="checkbox"
                 [checked]="isLinkSelected(link)"
-                (change)="toggleLinkSelection(link, $any($event.target).checked)"
+                (change)="toggleLinkSelection(link, $event)"
               />
-              <span class="links-selector-label">
-                {{ link.title || link.url }}
-              </span>
+              <div class="links-selector-item">
+                <div class="links-selector-title-text">
+                  {{ link.title || 'Sem título' }}
+                </div>
+                <div class="links-selector-url">
+                  {{ link.short_url || link.url }}
+                </div>
+              </div>
             </label>
           </div>
         </div>
@@ -122,8 +138,53 @@
             {{ saving ? 'Salvando...' : 'Salvar' }}
           </button>
         </div>
-
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL: LINKS DA COLEÇÃO -->
+  <div class="modal-backdrop" *ngIf="showLinksModal">
+    <div class="modal modal-links">
+      <div class="modal-header">
+        <h2>
+          Links da coleção
+          <span *ngIf="currentCollection"> - {{ currentCollection.name }}</span>
+        </h2>
+        <button
+          class="modal-close"
+          type="button"
+          (click)="closeCollectionLinksModal()"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div *ngIf="!currentCollectionLinks.length" class="empty-links">
+        Nenhum link nesta coleção.
+      </div>
+
+      <div class="collection-links-list" *ngIf="currentCollectionLinks.length">
+        <div class="collection-link-row" *ngFor="let link of currentCollectionLinks">
+          <div class="collection-link-info">
+            <div class="collection-link-title">
+              {{ link.title || 'Sem título' }}
+            </div>
+            <div class="collection-link-url">
+              {{ link.short_url || link.url }}
+            </div>
+          </div>
+          <div class="collection-link-actions">
+            <button type="button" (click)="copyShortUrl(link)">Copiar</button>
+            <button type="button" class="danger" (click)="deleteLinkFromCollection(link)">
+              Excluir
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer modal-links-footer">
+        <button type="button" (click)="closeCollectionLinksModal()">Fechar</button>
+      </div>
     </div>
   </div>
 </div>
